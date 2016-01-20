@@ -1,7 +1,7 @@
 CXX=g++
-LLVMCONFIG?=~/dev/HLC-HSAIL-Development-LLVM/build/bin/llvm-config
-CXXFLAGS=`$(LLVMCONFIG) --cxxflags`
+LLVMCONFIG=llvm-config
+CXXFLAGS=`$(LLVMCONFIG) --cxxflags` -Wall
 LDFLAGS=`$(LLVMCONFIG) --system-libs --ldflags --libs all` -lhsail -lLLVMHSAILUtil
 
 all:
-	$(CXX) $(CXXFLAGS) -shared -o libHLC.so hlc.cpp $(LDFLAGS)
+	$(CXX) -g $(CXXFLAGS) -g -shared -o libHLC.so hlc.cpp $(LDFLAGS)
