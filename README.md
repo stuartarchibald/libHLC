@@ -1,30 +1,20 @@
-# Build Instruction
+# Build Instructions
 
-
-## Install libHSAIL
-
-Build https://github.com/HSAFoundation/HSAIL-Tools/tree/master/libHSAIL by
-folloing the instruction in the README.
-
-Running `make install` in libHSAIL build directory will put some C++ header
-files and a static library (libhsail.a) into `/usr/local/lib`.  They will be
-used in the LLVM build later.  **NOTE**: Failure to install these files will
-not cause any error during LLVM installation.  Instead, it will cause hard
-error at runtime.
-
-
-## Install HLC
-
-Obtain HLC from https://github.com/HSAFoundation/HLC-HSAIL-Development-LLVM .
-Build with:
-
+## Build LLVM mainline
 ```bash
-cmake <hlc_source> -DLLVM_ENABLE_EH=ON -DLLVM_ENABLE_RTTI=ON  -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=HSAIL
-make -j
+git clone https://github.com/llvm-mirror/llvm.git
+cd llvm/tools && git clone http://llvm.org/git/lld.git
+cd ..
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD="AMDGPU;X86"
+make -j 8
 ```
 
 ## Build libHLC
 
+The `llvm-config` binary is in `build/bin` from above.
+
 ```bash
-LLVMCONFIG=<path-to-hlc-llvm-config-binary> conda build condarecipe
+LLVMCONFIG=<path-to-llvm-config-binary> conda build condarecipe
 ```

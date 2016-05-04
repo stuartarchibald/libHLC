@@ -25,14 +25,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 -------------------------------------------------------------------------------
-The file hlc.cpp contains modified code from the following HLC-HSAIL
-Development LLVM tools:
+The file hlc.cpp contains modified code from the LLVM project, at SHA 8d706cc,
 
 "opt":
-https://github.com/HSAFoundation/HLC-HSAIL-Development-LLVM/blob/hsail-stable-3.7/tools/opt/opt.cpp
+https://github.com/llvm-mirror/llvm/blob/master/tools/opt/opt.cpp
 
 "llc":
-https://github.com/HSAFoundation/HLC-HSAIL-Development-LLVM/blob/hsail-stable-3.7/tools/llc/llc.cpp
+https://github.com/llvm-mirror/llvm/blob/master/tools/llc/llc.cpp
 
 which are licensed as follows:
 
