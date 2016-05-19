@@ -332,7 +332,7 @@ namespace libHLC
 
         return TheTarget->createTargetMachine(TheTriple.getTriple(),
                                               CPUStr, FeaturesStr, Options,
-                                              RelocModel, CMModel,
+                                              getRelocModel(), CMModel,
                                               GetCodeGenOptLevel(OptLevel));
     }
 
@@ -513,7 +513,7 @@ namespace libHLC
 
         std::unique_ptr<TargetMachine> Target(
             TheTarget->createTargetMachine(TheTriple.getTriple(), CPUStr, FeaturesStr,
-                                           Options, RelocModel, CMModel, OLvl));
+                                           Options, getRelocModel(), CMModel, OLvl));
 
 
         assert(Target && "Could not allocate target machine!");
