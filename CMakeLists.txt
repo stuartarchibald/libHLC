@@ -52,6 +52,10 @@ add_definitions(${LLVM_DEFINITIONS})
 
 add_subdirectory(libhlc)
 
+# google test
+add_subdirectory(external/gtest_1.7.0)
+include_directories(${gtest_SOURCE_DIR}/include)
+
 message(
 "
 ------------------------------------
