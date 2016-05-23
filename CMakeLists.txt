@@ -50,6 +50,7 @@ message(STATUS "Using LLVMConfig.cmake found in: ${LLVM_DIR}")
 include_directories(${LLVM_INCLUDE_DIRS})
 add_definitions(${LLVM_DEFINITIONS})
 
+# hlc code
 add_subdirectory(libhlc)
 
 # google test

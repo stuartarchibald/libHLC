@@ -1,3 +1,5 @@
+#include "hlc.hh"
+
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/ADT/Triple.h"
 #include "llvm/Analysis/CallGraph.h"
@@ -60,71 +62,64 @@ namespace libHLC
 
     static const std::string MArch = "amdgcn"; // AMD Graphics Core Next
 
-    class ModuleRef
+    // ModuleRef impl
+    ModuleRef::ModuleRef(Module * module) : M(module) { };
+
+    ModuleRef::operator bool () const
     {
-        public:
-            ModuleRef(Module * module) : M(module) { }
+        return M != nullptr;
+    }
 
-            operator bool () const
-            {
-                return M != nullptr;
-            }
+    Module * ModuleRef::getModule()
+    {
+        return M;
+    }
 
-            Module * getModule()
-            {
-                return M;
-            }
+    void ModuleRef::destroy()
+    {
+        delete M;
+        M = nullptr;
+    }
 
-            void destroy()
-            {
-                delete M;
-                M = nullptr;
-            }
+    std::string ModuleRef::to_string()
+    {
+        std::string buf;
+        raw_string_ostream os(buf);
+        M->print(os, nullptr);
+        os.flush();
+        return buf;
+    }
 
-            std::string to_string()
-            {
-                std::string buf;
-                raw_string_ostream os(buf);
-                M->print(os, nullptr);
-                os.flush();
-                return buf;
-            }
+    ModuleRef * ModuleRef::parseAssembly(const char* Asm)
+    {
+        SMDiagnostic SM;
+        Module* M = parseAssemblyString(Asm, SM, *TheContext).release();
+        if (!M) return nullptr;
+        return new ModuleRef(M);
+    }
 
-            static ModuleRef* parseAssembly(const char* Asm)
-            {
-                SMDiagnostic SM;
-                Module* M = parseAssemblyString(Asm, SM, *TheContext).release();
-                if (!M) return nullptr;
-                return new ModuleRef(M);
-            }
+    ModuleRef * ModuleRef::parseBitcode(const char *Bitcode, size_t Len)
+    {
+        auto buf = MemoryBuffer::getMemBuffer(StringRef(Bitcode, Len),
+                                              "", false);
 
-            static ModuleRef* parseBitcode(const char *Bitcode, size_t Len)
-            {
-                auto buf = MemoryBuffer::getMemBuffer(StringRef(Bitcode, Len),
-                                                      "", false);
+        MemoryBufferRef mbref = buf->getMemBufferRef();
+        ErrorOr<std::unique_ptr<Module>> ModuleOrErr =
+                                          parseBitcodeFile(mbref, *TheContext);
 
-                MemoryBufferRef mbref = buf->getMemBufferRef();
-                ErrorOr<std::unique_ptr<Module>> ModuleOrErr =
-                                                  parseBitcodeFile(mbref, *TheContext);
+        if (std::error_code EC = ModuleOrErr.getError())
+        {
+            puts(EC.message().c_str());
+            return nullptr;
+        }
 
-                if (std::error_code EC = ModuleOrErr.getError())
-                {
-                    puts(EC.message().c_str());
-                    return nullptr;
-                }
+        std::unique_ptr<Module> mod (std::move(ModuleOrErr.get()));
 
-                std::unique_ptr<Module> mod (std::move(ModuleOrErr.get()));
+        mod->materializeAll();
 
-                mod->materializeAll();
-
-                ModuleRef * mref = new ModuleRef(mod.release());
-                return mref;
-            }
-
-
-        private:
-            Module * M;
-    };
+        ModuleRef * mref = new ModuleRef(mod.release());
+        return mref;
+    }
 
     CodeGenOpt::Level GetCodeGenOptLevel(int OptLevel)
     {
@@ -218,8 +213,6 @@ namespace libHLC
 
         llvm_shutdown();
     }
-
-
 
 
     // The following section is adapted from opt.cpp from the LLVM source tree.

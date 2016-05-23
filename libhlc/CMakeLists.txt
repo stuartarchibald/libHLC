@@ -27,6 +27,10 @@ objcarcopts
 #Link against LLVM libraries
 target_link_libraries(HLC ${llvm_libs})
 
+# include include/
+target_include_directories(HLC PUBLIC ${CMAKE_SOURCE_DIR}/include)
+
+
 # set library properties
 set_target_properties(HLC PROPERTIES
                      VERSION   ${libHLC_VERSION}
