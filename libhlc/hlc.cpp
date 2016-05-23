@@ -14,7 +14,6 @@
 #include "llvm/CodeGen/LinkAllCodegenComponents.h"
 #include "llvm/CodeGen/MIRParser/MIRParser.h"
 #include "llvm/InitializePasses.h"
-#include "llvm/IR/DataLayout.h"
 #include "llvm/IR/DebugInfo.h"
 #include "llvm/IR/IRPrintingPasses.h"
 #include "llvm/IR/LegacyPassManager.h"
@@ -28,8 +27,6 @@
 #include "llvm/Linker/Linker.h"
 #include "llvm/MC/SubtargetFeature.h"
 #include "llvm/Pass.h"
-#include "llvm/Support/CommandLine.h"
-#include "llvm/Support/Debug.h"
 #include "llvm/Support/FileSystem.h"
 #include "llvm/Support/FormattedStream.h"
 #include "llvm/Support/Host.h"
@@ -46,8 +43,6 @@
 #include "llvm/Target/TargetSubtargetInfo.h"
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
 #include "llvm/Transforms/Utils/Cloning.h"
-
-#include <iostream>
 
 namespace libHLC
 {
@@ -296,24 +291,6 @@ namespace libHLC
         Builder.populateLTOPassManager(PM);
     }
 
-
-    static cl::opt<bool>
-    OptLevelO1("O1",
-               cl::desc("Optimization level 1. Similar to clang -O1"));
-
-    static cl::opt<bool>
-    OptLevelO2("O2",
-               cl::desc("Optimization level 2. Similar to clang -O2"));
-
-    static cl::opt<bool>
-    OptLevelO3("O3",
-               cl::desc("Optimization level 3. Similar to clang -O3"));
-
-    static cl::opt<bool>
-    StandardLinkOpts("std-link-opts",
-                     cl::desc("Include the standard link time optimizations"));
-
-
     // Returns the TargetMachine instance or zero if no triple is provided.
     static TargetMachine* GetTargetMachine(Triple TheTriple, StringRef CPUStr,
                                            StringRef FeaturesStr,
@@ -336,14 +313,10 @@ namespace libHLC
                                               GetCodeGenOptLevel(OptLevel));
     }
 
-    static cl::opt<std::string>
-    DefaultDataLayout("default-data-layout",
-                      cl::desc("data layout string to use if not specified by module"),
-                      cl::value_desc("layout-string"), cl::init(""));
-
     void Optimize(llvm::Module * M, int OptLevel, int SizeLevel, int Verify)
     {
 
+        bool OptLevelO1, OptLevelO2, OptLevelO3, StandardLinkOpts;
         switch(OptLevel)
         {
             case 0:
@@ -411,9 +384,9 @@ namespace libHLC
 
         // Add an appropriate DataLayout instance for this module.
         const DataLayout &DL = M->getDataLayout();
-        if (DL.isDefault() && !DefaultDataLayout.empty())
+        if (DL.isDefault())
         {
-            M->setDataLayout(DefaultDataLayout);
+            M->setDataLayout("");
         }
 
         // Add internal analysis passes from the target machine.
