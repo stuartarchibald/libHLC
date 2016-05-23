@@ -35,3 +35,7 @@ target_include_directories(HLC PUBLIC ${CMAKE_SOURCE_DIR}/include)
 set_target_properties(HLC PROPERTIES
                      VERSION   ${libHLC_VERSION}
                      SOVERSION ${libHLC_SOVERSION})
+
+# Add in test dir
+add_subdirectory(test)
+
