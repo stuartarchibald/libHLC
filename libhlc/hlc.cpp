@@ -197,6 +197,8 @@ namespace libHLC
         initializeSafeStackPass(Registry);
         initializeSjLjEHPreparePass(Registry);
         initializePreISelIntrinsicLoweringPass(Registry);
+        initializeGlobalMergePass(Registry);
+        initializeInterleavedAccessPass(Registry);
 
 
         // FROM LLC
@@ -210,8 +212,14 @@ namespace libHLC
     void Finalize()
     {
         using namespace llvm;
-
-        llvm_shutdown();
+        // finalizer is called when the library is potentially unloaded
+        // the context can be deleted.
+        if (TheContext)
+        {
+            delete TheContext;
+            TheContext = nullptr;
+            llvm_shutdown();
+        }
     }
 
 
@@ -234,6 +242,7 @@ namespace libHLC
     /// OptLevel.
     static void AddOptimizationPasses(legacy::PassManagerBase &MPM,
                                       legacy::FunctionPassManager &FPM,
+                                      TargetMachine *TM,
                                       unsigned OptLevel, unsigned SizeLevel)
     {
         FPM.add(createVerifierPass()); // Verify that input is correct
@@ -267,6 +276,13 @@ namespace libHLC
         // When #pragma vectorize is on for SLP, do the same as above
         Builder.SLPVectorize =
             DisableSLPVectorization ? false : OptLevel > 1 && SizeLevel < 2;
+
+        if (TM)
+            Builder.addExtension(
+                PassManagerBuilder::EP_EarlyAsPossible,
+                [&](const PassManagerBuilder &, legacy::PassManagerBase &PM) {
+                  TM->addEarlyAsPossiblePasses(PM);
+            });
 
         Builder.populateFunctionPassManager(FPM);
         Builder.populateModulePassManager(MPM);
@@ -399,13 +415,13 @@ namespace libHLC
 
         // Apply optimisation passes
         if (OptLevelO1)
-            AddOptimizationPasses(Passes, *FPasses, 1, 0);
+            AddOptimizationPasses(Passes, *FPasses, TM.get(), 1, 0);
 
         if (OptLevelO2)
-            AddOptimizationPasses(Passes, *FPasses, 2, 0);
+            AddOptimizationPasses(Passes, *FPasses, TM.get(), 2, 0);
 
         if (OptLevelO3)
-            AddOptimizationPasses(Passes, *FPasses, 3, 0);
+            AddOptimizationPasses(Passes, *FPasses, TM.get(), 3, 0);
 
         if (OptLevelO1 || OptLevelO2 || OptLevelO3)
         {

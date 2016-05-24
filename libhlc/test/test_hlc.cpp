@@ -1,7 +1,16 @@
+#include "hlc.hh"
 #include "gtest/gtest.h"
 
-// a sample test to check compliation is ok
-TEST(A_test, sub_test)
+#define TEST_BASE C_Linkage
+
+// Check initializer and finalizer work as expected.
+// (essentially a leak check)
+TEST(TEST_BASE, Initialization)
 {
-    EXPECT_TRUE(1==1);
+    for (int i = 0 ; i < 4; i++)
+    {
+       HLC_Initialize();
+       HLC_Finalize();
+    }
 }
+

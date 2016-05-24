@@ -3,21 +3,48 @@
 # All rights reserved.
 #
 
-add_executable(test_hlc test_hlc.cpp)
+# Add a gtest with and the same running with valgrind
+macro(add_gtest TESTNAME)
+    add_executable(${TESTNAME} ${TESTNAME}.cpp)
+    # set link dir
+    link_directories(${libhlc_BINARY_DIR})
+    # include include/
+    target_include_directories(${TESTNAME} PUBLIC ${CMAKE_SOURCE_DIR}/include ${BIN_INCLUDE_DIR})
 
-# set link dir
-link_directories(${libhlc_BINARY_DIR})
+    # set linkage
+    target_link_libraries(${TESTNAME}
+                         HLC
+                         gtest
+                         gtest_main
+                         pthread
+                         )
 
-# include include/
-target_include_directories(test_hlc PUBLIC ${CMAKE_SOURCE_DIR}/include ${BIN_INCLUDE_DIR})
+    get_target_property(TEST_LOCATION ${TESTNAME} LOCATION)
+    add_test(${TESTNAME} ${TEST_LOCATION})
+    add_test(${TESTNAME}_with_valgrind
+         valgrind --error-exitcode=1 --leak-check=full --show-leak-kinds=all
+         --suppressions=test_suppressions.supp
+         ${TEST_LOCATION})
+endmacro()
 
-# set linkage
-target_link_libraries(test_hlc
-                     HLC
-                     gtest
-                     gtest_main
-                     pthread
-                     )
+set(TESTS
+    test_hlc
+    test_hlc_functions
+    )
 
-get_target_property(TEST_LOC test_hlc LOCATION)
-add_test(test_hlc ${TEST_LOC})
+foreach(TEST ${TESTS})
+    add_gtest(${TEST})
+endforeach()
+
+add_custom_target(COPY_IN_COMPILATION_RESOURCES ALL
+                 COMMAND cmake -E copy_directory
+                 ${CMAKE_SOURCE_DIR}/external/hcc/lib
+                 ${CMAKE_BINARY_DIR}/libhlc/test/
+                 DEPENDS ${gtest})
+
+add_custom_target(COPY_IN_TEST_RESOURCES ALL
+                 COMMAND cmake -E copy_directory
+                 ${CMAKE_SOURCE_DIR}/libhlc/test/resources
+                 ${CMAKE_BINARY_DIR}/libhlc/test/
+                 DEPENDS ${gtest})
+

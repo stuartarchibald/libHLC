@@ -60,6 +60,7 @@ char* HLC_CreateString(const char *str);
 
 void HLC_DisposeString(char *str);
 
+// rename this to ParseIR2Module ?
 ModuleRef* HLC_ParseModule(const char *Asm);
 
 ModuleRef* HLC_ParseBitcode(const char *Asm, size_t Len);
