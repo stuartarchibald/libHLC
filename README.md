@@ -12,9 +12,12 @@ make -j 8
 ```
 
 ## Build libHLC
-
-The `llvm-config` binary is in `build/bin` from above.
-
-```bash
-LLVMCONFIG=<path-to-llvm-config-binary> conda build condarecipe
+```
+git clone https://github.com/numba/libHLC.git
+mkdir build
+cd build
+cmake .. -DCMAKE_BUILD_TYPE=RELEASE  -DLLVM_DIR=<path_to_llvm_mainline_from_above>/build/lib/cmake/llvm/
+make -j 2
+# optionally test the build
+ctest -V
 ```
