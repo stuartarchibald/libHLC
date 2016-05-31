@@ -79,3 +79,19 @@ CONTRIBUTORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS WITH THE
 SOFTWARE.
+
+-------------------------------------------------------------------------------
+The directory `external` contains souce/work from other projects:
+
+Google Test (https://code.google.com/p/googletest/):
+https://github.com/google/googletest/archive/release-1.7.0.tar.gz
+found in "external/gtest_1.7.0".
+
+HCC (https://github.com/RadeonOpenCompute/hcc/):
+source from https://github.com/RadeonOpenCompute/hcc/tree/master/lib
+found in "external/hcc".
+
+For the above projects please see the location in the libhlc source tree to 
+view their specific licenses. 
+e.g. The Google Test license is found at "external/gtest_1.7.0/LICENSE".
+
