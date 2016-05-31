@@ -25,7 +25,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 -------------------------------------------------------------------------------
-The file hlc.cpp contains modified code from the LLVM project, at SHA 8d706cc,
+The file libhlc/hlc.cpp contains modified code from the LLVM project,
+at SHA 8d706cc,
 
 "opt":
 https://github.com/llvm-mirror/llvm/blob/master/tools/opt/opt.cpp
