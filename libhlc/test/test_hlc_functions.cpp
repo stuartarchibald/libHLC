@@ -19,8 +19,8 @@ std::string read_ir_from_file(const char * filename)
     std::ifstream f(filename, std::ios::out);
     if(f.is_open())
     {
-       buf << f.rdbuf();
-       f.close();
+        buf << f.rdbuf();
+        f.close();
     }
     else
     {
@@ -38,8 +38,8 @@ std::string read_bc_from_file(const char * filename)
     std::ifstream f(filename, std::ios::out | std::ios::binary);
     if(f.is_open())
     {
-       buf << f.rdbuf();
-       f.close();
+        buf << f.rdbuf();
+        f.close();
     }
     else
     {
@@ -54,18 +54,21 @@ std::string read_bc_from_file(const char * filename)
 // Environment class to setup and teardown the LLVMContext.
 // This is indicative of the use from python (calls to init to ensure the
 // library is initialised and a single call to finalize when gc takes place).
-class globalDSOLoadEnv: public ::testing::Environment {
-     public:
-        virtual void SetUp() {
+class globalDSOLoadEnv: public ::testing::Environment
+{
+    public:
+        virtual void SetUp()
+        {
             HLC_Initialize();
         }
-        virtual void TearDown() {
+        virtual void TearDown()
+        {
             HLC_Finalize();
         }
 };
 
 ::testing::Environment* const global_env =
-        ::testing::AddGlobalTestEnvironment(new globalDSOLoadEnv);
+    ::testing::AddGlobalTestEnvironment(new globalDSOLoadEnv);
 
 // Check string copy/destroy works
 TEST(TEST_BASE, String_Manipulation)
@@ -102,7 +105,7 @@ TEST(TEST_BASE, test_linkin_modules)
     ModuleRef* wrap_src  = HLC_ParseModule(wrapper_ir.c_str());
     std::string builtins_bc = read_bc_from_file("builtins-hsail.opt.bc");
     ModuleRef* bc_src = HLC_ParseBitcode(builtins_bc.c_str(),
-                                            builtins_bc.size());
+                                         builtins_bc.size());
 
     int ret;
 
@@ -139,7 +142,7 @@ TEST(TEST_BASE, test_optimize_module)
     ModuleRef* wrap_src  = HLC_ParseModule(wrapper_ir.c_str());
     std::string builtins_bc = read_bc_from_file("builtins-hsail.opt.bc");
     ModuleRef* bc_src = HLC_ParseBitcode(builtins_bc.c_str(),
-                                            builtins_bc.size());
+                                         builtins_bc.size());
 
     int ret;
 
@@ -170,7 +173,7 @@ TEST(TEST_BASE, test_compile_module_to_HSAIL)
     ModuleRef* wrap_src  = HLC_ParseModule(wrapper_ir.c_str());
     std::string builtins_bc = read_bc_from_file("builtins-hsail.opt.bc");
     ModuleRef* bc_src = HLC_ParseBitcode(builtins_bc.c_str(),
-                                            builtins_bc.size());
+                                         builtins_bc.size());
 
     int ret;
 
@@ -212,7 +215,7 @@ TEST(TEST_BASE, test_compile_module_to_BRIG)
     ModuleRef* wrap_src  = HLC_ParseModule(wrapper_ir.c_str());
     std::string builtins_bc = read_bc_from_file("builtins-hsail.opt.bc");
     ModuleRef* bc_src = HLC_ParseBitcode(builtins_bc.c_str(),
-                                            builtins_bc.size());
+                                         builtins_bc.size());
 
     int ret;
 
@@ -251,7 +254,8 @@ TEST(TEST_BASE, test_compile_module_to_BRIG)
 TEST(TEST_BASE, test_many_compile_module_to_BRIG)
 {
     int trials = 5;
-    for(int k = 0; k < trials; k++){
+    for(int k = 0; k < trials; k++)
+    {
         HLC_Initialize();
         std::string ir = read_ir_from_file("demo_ir.ll");
         ModuleRef* dst = HLC_ParseModule(ir.c_str());
@@ -259,7 +263,7 @@ TEST(TEST_BASE, test_many_compile_module_to_BRIG)
         ModuleRef* wrap_src  = HLC_ParseModule(wrapper_ir.c_str());
         std::string builtins_bc = read_bc_from_file("builtins-hsail.opt.bc");
         ModuleRef* bc_src = HLC_ParseBitcode(builtins_bc.c_str(),
-                                                builtins_bc.size());
+                                             builtins_bc.size());
 
         int ret;
 

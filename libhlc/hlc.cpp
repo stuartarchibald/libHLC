@@ -280,9 +280,10 @@ namespace libHLC
         if (TM)
             Builder.addExtension(
                 PassManagerBuilder::EP_EarlyAsPossible,
-                [&](const PassManagerBuilder &, legacy::PassManagerBase &PM) {
-                  TM->addEarlyAsPossiblePasses(PM);
-            });
+                [&](const PassManagerBuilder &, legacy::PassManagerBase &PM)
+        {
+            TM->addEarlyAsPossiblePasses(PM);
+        });
 
         Builder.populateFunctionPassManager(FPM);
         Builder.populateModulePassManager(MPM);
