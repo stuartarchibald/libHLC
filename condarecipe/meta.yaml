@@ -1,6 +1,6 @@
 package:
     name: libhlc
-    version: "0.2"
+    version: "0.3"
 
 source:
     path: ..
@@ -8,9 +8,10 @@ source:
 build:
     number: 0
     script_env:
-        - LLVMCONFIG
+        - LLVM_MAINLINE
+
 about:
     home: https://github.com/numba/libHLC
     license: BSD
     summary: A shared lib that wraps HLC-LLVM from HSAFoundation for code generation to HSA devices
-
+    license_file: LICENSE.TXT
