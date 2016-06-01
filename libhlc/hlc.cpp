@@ -597,8 +597,8 @@ extern "C" {
 
     int HLC_ModuleOptimize(ModuleRef *M, int OptLevel, int SizeLevel, int Verify)
     {
-        if (OptLevel < 0 && OptLevel > 3) return 0;
-        if (SizeLevel < 0 && SizeLevel > 2) return 0;
+        if (OptLevel < 0 || OptLevel > 3) return 0;
+        if (SizeLevel < 0 || SizeLevel > 2) return 0;
         Module * mref = M->getModule();
         Optimize(mref, OptLevel, SizeLevel, Verify);
         return 1;
@@ -628,7 +628,7 @@ extern "C" {
         const Module * ref = M->getModule();
         std::unique_ptr<Module> sM = llvm::CloneModule (ref);
 
-        if (OptLevel < 0 && OptLevel > 3) return 0;
+        if (OptLevel < 0 || OptLevel > 3) return 0;
         // Compile
         std::string buf;
         raw_string_ostream os(buf);
@@ -645,7 +645,7 @@ extern "C" {
         const Module * ref = M->getModule();
         std::unique_ptr<Module> sM = llvm::CloneModule (ref);
 
-        if (OptLevel < 0 && OptLevel > 3) return 0;
+        if (OptLevel < 0 || OptLevel > 3) return 0;
         // Compile
         std::string buf;
         raw_string_ostream os(buf);
