@@ -509,10 +509,10 @@ namespace libHLC
         legacy::PassManager PM;
 
         // Add an appropriate TargetLibraryInfo pass for the module's triple.
-        TargetLibraryInfoImpl TLII(Triple(mod->getTargetTriple()));
+        TargetLibraryInfoImpl TLII(TheTriple);
 
         // The -disable-simplify-libcalls flag actually disables all builtin optzns.
-        TLII.disableAllFunctions();
+        // TLII.disableAllFunctions();
 
         PM.add(new TargetLibraryInfoWrapperPass(TLII));
 
