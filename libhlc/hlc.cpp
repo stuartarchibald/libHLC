@@ -151,7 +151,7 @@ namespace libHLC
             return;
         }
 
-        sys::PrintStackTraceOnErrorSignal();
+        sys::PrintStackTraceOnErrorSignal("libHLC");
         EnablePrettyStackTrace();
 
         // Enable debug stream buffering.
@@ -326,7 +326,10 @@ namespace libHLC
     void Optimize(llvm::Module * M, int OptLevel, int SizeLevel, int Verify)
     {
 
-        bool OptLevelO1, OptLevelO2, OptLevelO3, StandardLinkOpts;
+        bool OptLevelO1 = false;
+        bool OptLevelO2 = false;
+        bool OptLevelO3 = false;
+        bool StandardLinkOpts = false;
         switch(OptLevel)
         {
             case 0:
@@ -424,7 +427,7 @@ namespace libHLC
         if (OptLevelO3)
             AddOptimizationPasses(Passes, *FPasses, TM.get(), 3, 0);
 
-        if (OptLevelO1 || OptLevelO2 || OptLevelO3)
+        if (FPasses)
         {
             FPasses->doInitialization();
             for (Function &F : *M)
